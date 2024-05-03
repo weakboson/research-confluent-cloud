@@ -1,6 +1,6 @@
 services:
   mysql:
-    image: mysql:8.0.37-bookworm
+    image: mysql:8.0.37-bookworm # https://hub.docker.com/_/mysql
     volumes:
       - type: tmpfs
         target: /var/log/mysql
