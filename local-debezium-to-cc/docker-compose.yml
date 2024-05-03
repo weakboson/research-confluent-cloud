@@ -36,3 +36,12 @@ services:
       - mysql
     ports:
       - 8083:8083
+
+  debezium-ui:
+    image: debezium/debezium-ui:1.9 # https://hub.docker.com/r/debezium/debezium-ui
+    environment:
+      - KAFKA_CONNECT_URIS=http://debezium:8083
+    depends_on:
+      - debezium
+    ports:
+      - 8080:8080
