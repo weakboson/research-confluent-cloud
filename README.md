@@ -27,4 +27,29 @@ kafka = Kafka.new(
 )
 ```
 
+### Kafka Connect
+
+https://docs.confluent.io/ja-jp/platform/7.1/kafka/authentication_sasl/authentication_sasl_plain.html#kconnect-long
+
+#### properties
+
+```properties
+sasl.mechanism=PLAIN
+security.protocol=SASL_SSL
+sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required \
+  username="KAFKA_USERNAME" \
+  password="KAFKA_PASSWORD";
+```
+
+#### docker-compose
+
+```yaml
+  debezium:
+    image: debezium/connect:2.6.1.Final
+    environment:
+      - CONNECT_SASL_MECHANISM=PLAIN
+      - CONNECT_SECURITY_PROTOCOL=SASL_SSL
+      - CONNECT_SASL_JAAS_CONFIG=org.apache.kafka.common.security.plain.PlainLoginModule required username="${KAFKA_USERNAME}" password="${KAFKA_PASSWORD}";
+```
+
 [^1]:Simple Authentication and Security Layer

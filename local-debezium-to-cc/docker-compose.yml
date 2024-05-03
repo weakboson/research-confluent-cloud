@@ -20,3 +20,19 @@ services:
       - MYSQL_DATABASE=inventory
       - MYSQL_USER=mysqluser
       - MYSQL_PASSWORD=mysqlpw
+
+  debezium:
+    image: debezium/connect:2.6.1.Final # https://hub.docker.com/r/debezium/connect
+    environment:
+      - GROUP_ID=1
+      - CONFIG_STORAGE_TOPIC=_debezium-configs
+      - OFFSET_STORAGE_TOPIC=_debezium-offsets
+      - STATUS_STORAGE_TOPIC=_debezium-status
+      - BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS}
+      - CONNECT_SASL_MECHANISM=PLAIN
+      - CONNECT_SECURITY_PROTOCOL=SASL_SSL
+      - CONNECT_SASL_JAAS_CONFIG=org.apache.kafka.common.security.plain.PlainLoginModule required username="${KAFKA_USERNAME}" password="${KAFKA_PASSWORD}";
+    depends_on:
+      - mysql
+    ports:
+      - 8083:8083
