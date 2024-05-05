@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-mysql -u mysqluser -pmysqlpw inventory < /tmp/setup/setup.sql
+mysql -u root -psecret inventory < /tmp/setup/setup.sql
