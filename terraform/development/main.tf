@@ -1,3 +1,4 @@
+# ref. https://github.com/confluentinc/terraform-provider-confluent/blob/7de2072034b81ca10592f304946540ddccc0aeb3/examples/configurations/basic-kafka-acls/main.tf
 # Configure the Confluent Provider
 terraform {
   required_providers {
@@ -39,6 +40,14 @@ resource "confluent_service_account" "alice" {
   description  = "Development Kafka Service Account"
 }
 
+# Create a Role Binding
+# https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/resources/confluent_role_binding
+resource "confluent_role_binding" "alice-kafka-research-cluster-admin" {
+  principal   = "User:${confluent_service_account.alice.id}"
+  role_name   = "CloudClusterAdmin"
+  crn_pattern = confluent_kafka_cluster.research-cluster.rbac_crn
+}
+
 # Create a Kafka API Key
 # https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/resources/confluent_api_key
 resource "confluent_api_key" "kafka-research-cluster-alice-api-key" {
@@ -61,24 +70,20 @@ resource "confluent_api_key" "kafka-research-cluster-alice-api-key" {
   }
 }
 
-# # Create a Kafka Topic
-# # https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/resources/confluent_kafka_topic
-# resource "confluent_kafka_topic" "orders" {
-#   kafka_cluster {
-#     id = confluent_kafka_cluster.research-cluster.id
-#   }
-#   topic_name         = "orders"
-#   partitions_count   =  25
-#   rest_endpoint      = confluent_kafka_cluster.research-cluster.rest_endpoint
-#   config = {
-#     cleanup_policy = "compact"
-#   }
-#   credentials {
-#     key    = confluent_api_key.kafka-research-cluster-alice-api-key.id
-#     secret = confluent_api_key.kafka-research-cluster-alice-api-key.secret
-#   }
-
-#   # lifecycle {
-#   #   prevent_destroy = false
-#   # }
-# }
+# Create a Kafka Topic
+# https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/resources/confluent_kafka_topic
+resource "confluent_kafka_topic" "orders" {
+  kafka_cluster {
+    id = confluent_kafka_cluster.research-cluster.id
+  }
+  topic_name         = "orders"
+  partitions_count   =  25
+  rest_endpoint      = confluent_kafka_cluster.research-cluster.rest_endpoint
+  config = {
+    cleanup_policy = "compact"
+  }
+  credentials {
+    key    = confluent_api_key.kafka-research-cluster-alice-api-key.id
+    secret = confluent_api_key.kafka-research-cluster-alice-api-key.secret
+  }
+}
