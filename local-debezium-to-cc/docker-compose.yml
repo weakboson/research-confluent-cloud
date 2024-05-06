@@ -56,12 +56,12 @@ services:
       - OFFSET_STORAGE_TOPIC=__debezium_offsets
       - STATUS_STORAGE_TOPIC=__debezium_status
       # local docker
-      - BOOTSTRAP_SERVERS=kafka:9092
+      # - BOOTSTRAP_SERVERS=kafka:9092
       # Confluent Cloud
-      # - BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS}
-      # - CONNECT_SASL_MECHANISM=PLAIN
-      # - CONNECT_SECURITY_PROTOCOL=SASL_SSL
-      # - CONNECT_SASL_JAAS_CONFIG=org.apache.kafka.common.security.plain.PlainLoginModule required username="${KAFKA_API_KEY}" password="${KAFKA_API_SECRET}";
+      - BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS}
+      - CONNECT_SASL_MECHANISM=PLAIN
+      - CONNECT_SECURITY_PROTOCOL=SASL_SSL
+      - CONNECT_SASL_JAAS_CONFIG=org.apache.kafka.common.security.plain.PlainLoginModule required username="${KAFKA_API_KEY}" password="${KAFKA_API_SECRET}";
     depends_on:
       - mysql
       - kafka
