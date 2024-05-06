@@ -36,7 +36,7 @@ resource "confluent_kafka_cluster" "research-cluster" {
 # Create a Service Account
 # https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/resources/confluent_service_account
 resource "confluent_service_account" "alice" {
-  display_name = "alice"
+  display_name = "Alice"
   description  = "Development Kafka Service Account"
 }
 
@@ -72,18 +72,101 @@ resource "confluent_api_key" "kafka-research-cluster-alice-api-key" {
 
 # Create a Kafka Topic
 # https://registry.terraform.io/providers/confluentinc/confluent/latest/docs/resources/confluent_kafka_topic
-resource "confluent_kafka_topic" "orders" {
+resource "confluent_kafka_topic" "test_topic" {
   kafka_cluster {
     id = confluent_kafka_cluster.research-cluster.id
   }
-  topic_name         = "orders"
-  partitions_count   =  25
+  topic_name         = "test_topic"
+  partitions_count   =  1
   rest_endpoint      = confluent_kafka_cluster.research-cluster.rest_endpoint
   config = {
-    cleanup_policy = "compact"
+    "cleanup.policy"  = "compact"
+    "retention.ms"    = -1
+    "retention.bytes" = -1
   }
   credentials {
     key    = confluent_api_key.kafka-research-cluster-alice-api-key.id
     secret = confluent_api_key.kafka-research-cluster-alice-api-key.secret
   }
 }
+
+# # Create a Kafka Topic for Debezium
+# resource "confluent_kafka_topic" "__consumer_offsets" {
+#   kafka_cluster {
+#     id = confluent_kafka_cluster.research-cluster.id
+#   }
+#   topic_name         = "__consumer_offsets"
+#   partitions_count   =  50
+#   rest_endpoint      = confluent_kafka_cluster.research-cluster.rest_endpoint
+#   config = {
+#     cleanup_policy = "compact"
+#   }
+#   credentials {
+#     key    = confluent_api_key.kafka-research-cluster-alice-api-key.id
+#     secret = confluent_api_key.kafka-research-cluster-alice-api-key.secret
+#   }
+# }
+
+# resource "confluent_kafka_topic" "__debezium_offsets" {
+#   kafka_cluster {
+#     id = confluent_kafka_cluster.research-cluster.id
+#   }
+#   topic_name         = "__debezium_offsets"
+#   partitions_count   =  25
+#   rest_endpoint      = confluent_kafka_cluster.research-cluster.rest_endpoint
+#   config = {
+#     cleanup_policy = "compact"
+#   }
+#   credentials {
+#     key    = confluent_api_key.kafka-research-cluster-alice-api-key.id
+#     secret = confluent_api_key.kafka-research-cluster-alice-api-key.secret
+#   }
+# }
+
+# resource "confluent_kafka_topic" "__debezium_status" {
+#   kafka_cluster {
+#     id = confluent_kafka_cluster.research-cluster.id
+#   }
+#   topic_name         = "__debezium_status"
+#   partitions_count   =  5
+#   rest_endpoint      = confluent_kafka_cluster.research-cluster.rest_endpoint
+#   config = {
+#     cleanup_policy = "compact"
+#   }
+#   credentials {
+#     key    = confluent_api_key.kafka-research-cluster-alice-api-key.id
+#     secret = confluent_api_key.kafka-research-cluster-alice-api-key.secret
+#   }
+# }
+
+# resource "confluent_kafka_topic" "__debezium_configs" {
+#   kafka_cluster {
+#     id = confluent_kafka_cluster.research-cluster.id
+#   }
+#   topic_name         = "__debezium_configs"
+#   partitions_count   =  1
+#   rest_endpoint      = confluent_kafka_cluster.research-cluster.rest_endpoint
+#   config = {
+#     cleanup_policy = "compact"
+#   }
+#   credentials {
+#     key    = confluent_api_key.kafka-research-cluster-alice-api-key.id
+#     secret = confluent_api_key.kafka-research-cluster-alice-api-key.secret
+#   }
+# }
+
+# resource "confluent_kafka_topic" "__schemahistory_fullfillment" {
+#   kafka_cluster {
+#     id = confluent_kafka_cluster.research-cluster.id
+#   }
+#   topic_name         = "__schemahistory.fullfillment"
+#   partitions_count   =  1
+#   rest_endpoint      = confluent_kafka_cluster.research-cluster.rest_endpoint
+#   config = {
+#     cleanup_policy = "delete"
+#   }
+#   credentials {
+#     key    = confluent_api_key.kafka-research-cluster-alice-api-key.id
+#     secret = confluent_api_key.kafka-research-cluster-alice-api-key.secret
+#   }
+# }
