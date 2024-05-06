@@ -20,32 +20,32 @@ services:
       - MYSQL_ROOT_PASSWORD=secret
       - MYSQL_DATABASE=inventory
 
-  zookeeper:
-    image: debezium/zookeeper:${DEBEZIUM_VERSION} # https://hub.docker.com/r/debezium/zookeeper
-    container_name: zookeeper
-    ports:
-      - 2181:2181
-      - 2888:2888
-      - 3888:3888
+  # zookeeper:
+  #   image: debezium/zookeeper:${DEBEZIUM_VERSION} # https://hub.docker.com/r/debezium/zookeeper
+  #   container_name: zookeeper
+  #   ports:
+  #     - 2181:2181
+  #     - 2888:2888
+  #     - 3888:3888
 
-  kafka:
-    image: debezium/kafka:${DEBEZIUM_VERSION} # https://hub.docker.com/r/debezium/kafka
-    container_name: kafka
-    volumes:
-      - type: tmpfs
-        target: /kafka/logs
-        tmpfs:
-          size: 100m
-      - type: tmpfs
-        target: /kafka/data
-        tmpfs:
-          size: 100m
-    environment:
-      - ZOOKEEPER_CONNECT=zookeeper:2181
-    ports:
-      - 9092:9092
-    depends_on:
-      - zookeeper
+  # kafka:
+  #   image: debezium/kafka:${DEBEZIUM_VERSION} # https://hub.docker.com/r/debezium/kafka
+  #   container_name: kafka
+  #   volumes:
+  #     - type: tmpfs
+  #       target: /kafka/logs
+  #       tmpfs:
+  #         size: 100m
+  #     - type: tmpfs
+  #       target: /kafka/data
+  #       tmpfs:
+  #         size: 100m
+  #   environment:
+  #     - ZOOKEEPER_CONNECT=zookeeper:2181
+  #   ports:
+  #     - 9092:9092
+  #   depends_on:
+  #     - zookeeper
 
   debezium:
     image: debezium/connect:${DEBEZIUM_VERSION} # https://hub.docker.com/r/debezium/connect
@@ -64,7 +64,7 @@ services:
       - CONNECT_SASL_JAAS_CONFIG=org.apache.kafka.common.security.plain.PlainLoginModule required username="${KAFKA_API_KEY}" password="${KAFKA_API_SECRET}";
     depends_on:
       - mysql
-      - kafka
+      # - kafka
     ports:
       - 8083:8083
 

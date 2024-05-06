@@ -23,17 +23,22 @@ resource "kafka-connect_connector" "debezium" {
     "database.server.id" = "1"
     "database.hostname" = "mysql"
     "database.include.list" = "inventory"
-
-    # local docker
-    "schema.history.internal.kafka.bootstrap.servers" = "kafka:9092"
-    # Confluent Cloud
-    # "schema.history.internal.kafka.bootstrap.servers" = "${env.KAFKA_BOOTSTRAP_SERVERS}"
+    "topic.prefix" = "debezium"
+    "tasks.max" = "1"
     "schema.history.internal.kafka.topic" = "__schemahistory.fullfillment"
     "include.schema.changes" = "true"
 
-    "topic.prefix" = "debezium"
+    # local docker
+    # "schema.history.internal.kafka.bootstrap.servers" = "kafka:9092"
 
-    "tasks.max" = "1"
+    # Confluent Cloud
+    "schema.history.internal.kafka.bootstrap.servers" = var.KAFKA_BOOTSTRAP_SERVERS
+    "schema.history.internal.consumer.security.protocol" = "SASL_SSL"
+    "schema.history.internal.consumer.sasl.mechanism" = "PLAIN"
+    "schema.history.internal.consumer.sasl.jaas.config" = "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"${var.KAFKA_API_KEY}\" password=\"${var.KAFKA_API_SECRET}\";"
+    "schema.history.internal.producer.security.protocol" = "SASL_SSL"
+    "schema.history.internal.producer.sasl.mechanism" = "PLAIN"
+    "schema.history.internal.producer.sasl.jaas.config" = "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"${var.KAFKA_API_KEY}\" password=\"${var.KAFKA_API_SECRET}\";"
   }
 
   config_sensitive = {
