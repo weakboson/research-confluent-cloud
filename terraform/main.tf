@@ -95,8 +95,8 @@ resource "confluent_kafka_topic" "__debezium_topics" {
   for_each = tomap({
     "__debezium_offsets" = "25"
     "__debezium_status"  = "5"
-    "__debezium_configs" = "3"
-    "__schemahistory_fullfillment" = "1"
+    "__debezium_configs" = "1"
+    "__schemahistory.fullfillment" = "1"
   })
   kafka_cluster {
     id = confluent_kafka_cluster.research-cluster.id
@@ -115,18 +115,19 @@ resource "confluent_kafka_topic" "__debezium_topics" {
   }
 }
 
-# resource "confluent_kafka_topic" "__consumer_offsets" {
-#   kafka_cluster {
-#     id = confluent_kafka_cluster.research-cluster.id
-#   }
-#   topic_name         = "__consumer_offsets"
-#   partitions_count   =  50
-#   rest_endpoint      = confluent_kafka_cluster.research-cluster.rest_endpoint
-#   config = {
-#     cleanup_policy = "compact"
-#   }
-#   credentials {
-#     key    = confluent_api_key.kafka-research-cluster-alice-api-key.id
-#     secret = confluent_api_key.kafka-research-cluster-alice-api-key.secret
-#   }
-# }
+# Create Kafka Consumer internal use Topic
+resource "confluent_kafka_topic" "__consumer_offsets" {
+  kafka_cluster {
+    id = confluent_kafka_cluster.research-cluster.id
+  }
+  topic_name         = "__consumer_offsets"
+  partitions_count   =  50
+  rest_endpoint      = confluent_kafka_cluster.research-cluster.rest_endpoint
+  config = {
+    "cleanup.policy" = "compact"
+  }
+  credentials {
+    key    = confluent_api_key.kafka-research-cluster-alice-api-key.id
+    secret = confluent_api_key.kafka-research-cluster-alice-api-key.secret
+  }
+}
